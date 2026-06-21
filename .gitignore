@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+dist/
+build/
+.env
+
+# AI Agent Files (Critical)
+agent/
+.agent/
+.gemini/
+brain/
+.system_generated/
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Project-specific node_modules
+frontend/node_modules/
+backend/node_modules/
+frontend/.next/
+frontend/out/
+backend/dist/
