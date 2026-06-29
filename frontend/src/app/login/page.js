@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { motion } from "framer-motion";
 import { LogIn, Mail, Lock, ChevronRight, ChevronLeft, Chrome, Github, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -8,7 +9,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "@/context/I18nContext";
 
-export default function LoginPage() {
+function LoginForm() {
   const { t, lang } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -32,7 +33,6 @@ export default function LoginPage() {
     setError("");
     try {
       await login(formData.email, formData.password);
-      // login in AuthContext should update user state, useEffect will handle redirect
     } catch (err) {
       setError(err.response?.data?.error || t("error_login"));
     } finally {
@@ -138,5 +138,13 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[85vh] flex items-center justify-center"><div className="text-white/40">Loading...</div></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
