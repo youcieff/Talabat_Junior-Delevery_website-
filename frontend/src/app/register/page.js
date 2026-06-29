@@ -14,8 +14,7 @@ export default function RegisterPage() {
     email: "",
     phone: "",
     password: "",
-    confirmPassword: "",
-    role: "user"
+    confirmPassword: ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,8 +33,7 @@ export default function RegisterPage() {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        password: formData.password,
-        role: formData.role
+        password: formData.password
       });
     } catch (err) {
       setError(err.response?.data?.error || t("error_register"));
@@ -155,35 +153,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="md:col-span-2 space-y-4">
-            <label className={`block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 ${lang === 'ar' ? 'mr-6' : 'ml-6'}`}>
-              {t("role_label")}
-            </label>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, role: "user" })}
-                className={`py-4 rounded-2xl border font-black text-xs uppercase tracking-widest transition-all ${
-                  formData.role === "user" 
-                  ? "bg-cyber-cyan/10 border-cyber-cyan text-cyber-cyan shadow-neon-cyan" 
-                  : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10"
-                }`}
-              >
-                {t("role_user")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, role: "admin" })}
-                className={`py-4 rounded-2xl border font-black text-xs uppercase tracking-widest transition-all ${
-                  formData.role === "admin" 
-                  ? "bg-cyber-pink/10 border-cyber-pink text-cyber-pink shadow-neon-pink" 
-                  : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10"
-                }`}
-              >
-                {t("role_admin")}
-              </button>
-            </div>
-          </div>
+
 
           <div className="md:col-span-2 pt-6">
             <button 

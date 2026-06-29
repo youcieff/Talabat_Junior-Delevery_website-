@@ -56,7 +56,7 @@ function LoginForm() {
              <LogIn size={40} className="text-white group-hover:scale-110 transition-transform" />
           </div>
           <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">
-            {t("login_title_1")} <span className="text-cyber-cyan">{t("login_title_2")}</span>
+            {lang === 'ar' ? 'تسجيل' : 'SIGN'} <span className="text-cyber-cyan">{lang === 'ar' ? 'الدخول' : 'IN'}</span>
           </h1>
           
           {error && (
@@ -127,13 +127,25 @@ function LoginForm() {
             </button>
           </div>
           
-          <div className="mt-12 pt-10 border-t border-white/5">
+          <div className="mt-12 pt-10 border-t border-white/5 space-y-6">
+            {/* Create Account */}
             <p className="text-white/40 text-[11px] font-bold uppercase tracking-widest">
-              {t("footer_no_account")}{" "}
-              <Link href="/register" className="text-cyber-cyan hover:text-white transition-colors border-b border-cyber-cyan/30 pb-0.5 ml-2">
-                {t("footer_register_link")}
+              {lang === 'ar' ? 'ليس لديك حساب؟' : "Don't have an account?"}{" "}
+              <Link href="/register" className="text-cyber-cyan hover:text-white transition-colors border-b border-cyber-cyan/30 pb-0.5 ml-2 font-black">
+                {lang === 'ar' ? 'إنشاء حساب' : 'Create Account'}
               </Link>
             </p>
+
+            {/* Admin Portal Quick Access */}
+            <div className="pt-2">
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass border border-white/10 hover:border-cyber-pink/40 hover:text-cyber-pink text-white/30 transition-all text-[10px] font-black uppercase tracking-widest group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-cyber-pink animate-pulse"></span>
+                {lang === 'ar' ? 'دخول الإدمن' : 'Admin Portal'}
+              </Link>
+            </div>
           </div>
         </div>
       </motion.div>

@@ -85,10 +85,15 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <Link href="/login" className="hidden md:flex items-center gap-2 bg-white/5 hover:bg-white/10 px-5 py-2 rounded-xl border border-white/10 transition-all group font-bold text-xs uppercase tracking-tight">
-                <User size={16} className="group-hover:text-cyber-cyan transition-colors" />
+            <div className="hidden md:flex items-center gap-2">
+              <Link href="/register" className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-5 py-2 rounded-xl border border-white/10 transition-all group font-bold text-xs uppercase tracking-tight text-white/40 hover:text-white">
+                <span>{lang === 'ar' ? 'إنشاء حساب' : 'Sign Up'}</span>
+              </Link>
+              <Link href="/login" className="flex items-center gap-2 bg-cyber-gradient px-5 py-2 rounded-xl shadow-neon-pink hover:scale-[1.02] transition-all group font-bold text-xs uppercase tracking-tight">
+                <User size={16} className="group-hover:scale-110 transition-transform" />
                 <span>{t("nav_login")}</span>
               </Link>
+            </div>
             )}
             
             <button className="md:hidden p-2 text-white/40">
