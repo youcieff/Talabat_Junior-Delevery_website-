@@ -9,6 +9,22 @@ import { useTranslation } from "@/context/I18nContext";
 export default function RestaurantCard({ restaurant }) {
   const { lang, t } = useTranslation();
 
+  const name = typeof restaurant.name === 'object'
+    ? (restaurant.name[lang] || restaurant.name.en)
+    : restaurant.name;
+
+  const description = typeof restaurant.description === 'object'
+    ? (restaurant.description[lang] || restaurant.description.en)
+    : restaurant.description;
+
+  const category = typeof restaurant.category === 'object'
+    ? (restaurant.category[lang] || restaurant.category.en)
+    : restaurant.category;
+
+  const imageSrc = restaurant.image && restaurant.image !== 'no-photo.jpg'
+    ? (restaurant.image.startsWith('http') || restaurant.image.startsWith('/') ? restaurant.image : `http://localhost:5000${restaurant.image}`)
+    : null;
+
   return (
     <motion.div
       whileHover={{ y: -10 }}
@@ -19,10 +35,10 @@ export default function RestaurantCard({ restaurant }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-60"></div>
           
           <div className="w-full h-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-            {restaurant.image && restaurant.image !== 'no-photo.jpg' ? (
+            {imageSrc ? (
                <img 
-                 src={restaurant.image.startsWith('http') ? restaurant.image : `http://localhost:5000${restaurant.image}`} 
-                 alt={restaurant.name} 
+                 src={imageSrc} 
+                 alt={name} 
                  className="w-full h-full object-cover" 
                />
             ) : (
@@ -39,7 +55,7 @@ export default function RestaurantCard({ restaurant }) {
           
           <div className={`absolute bottom-6 ${lang === 'ar' ? 'right-6' : 'left-6'} z-20`}>
              <h3 className="text-2xl font-black text-white group-hover:text-cyber-cyan transition-colors italic uppercase tracking-tighter leading-none">
-               {restaurant.name}
+               {name}
              </h3>
           </div>
         </div>
@@ -47,10 +63,10 @@ export default function RestaurantCard({ restaurant }) {
 
       <div className="p-8">
         <p className={`text-white/40 text-[10px] uppercase font-black tracking-widest mb-6 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-           {restaurant.category || t("category_all")}
+           {category || t("category_all")}
         </p>
         <p className={`text-white/40 text-sm mb-8 line-clamp-2 font-medium leading-relaxed ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
-          {restaurant.description || (lang === 'ar' 
+          {description || (lang === 'ar' 
             ? "أشهى المأكولات المحضرة بعناية فائقة وتوصيل سريع حتى باب منزلك." 
             : "The finest meals prepared with ultimate care, delivered fast to your door.")}
         </p>

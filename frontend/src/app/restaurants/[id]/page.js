@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useTranslation } from "@/context/I18nContext";
 import api from "@/utils/api";
+import { MOCK_RESTAURANTS } from "@/data/mockData";
 
 export default function RestaurantMenuPage() {
   const { id } = useParams();
@@ -21,6 +22,33 @@ export default function RestaurantMenuPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const isDemoId = typeof id === 'string' && id.startsWith('demo-');
+      
+      if (isDemoId) {
+        setLoading(true);
+        const mockRest = MOCK_RESTAURANTS.find(r => r._id === id);
+        if (mockRest) {
+          setRestaurant({
+            ...mockRest,
+            name: mockRest.name[lang] || mockRest.name.en,
+            description: mockRest.description[lang] || mockRest.description.en,
+          });
+          
+          const localizedMenu = (mockRest.menuItems || []).map(item => ({
+            ...item,
+            id: item._id,
+            name: item.name[lang] || item.name.en,
+            description: item.description[lang] || item.description.en,
+          }));
+          setMenuItems(localizedMenu);
+          setError(null);
+        } else {
+          setError(lang === 'ar' ? "المطعم غير موجود" : "Restaurant not found.");
+        }
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         // Fetch restaurant details
@@ -34,23 +62,29 @@ export default function RestaurantMenuPage() {
         setLoading(false);
       } catch (err) {
         console.error("Fetch error:", err);
-        setError(lang === 'ar' ? "تعذر تحميل البيانات. تأكد من تشغيل الخادم وقاعدة البيانات." : "Failed to load data. Make sure server and DB are running.");
-        setLoading(false);
         
-        // Fallback to localized mock if API fails for demo purposes
-        setRestaurant({
-          name: lang === 'ar' ? "طلبات جونيور برجر" : "Talabat Junior Burger",
-          rating: 4.8,
-          description: lang === 'ar' ? "نكهة المستقبل في كل قضمة. نستخدم أجود أنواع اللحوم المحضرة بتقنيات متطورة." : "Future flavors in every bite. We use premium meats prepared with advanced techniques.",
-          deliveryTime: "20-30"
-        });
-        setMenuItems([
-          { id: 1, name: lang === 'ar' ? "جونيور تشيز برجر" : "Junior Cheeseburger", price: 120, category: "Burger", description: "Grilled beef, liquid neon cheese." },
-          { id: 2, name: lang === 'ar' ? "ماستر برجر" : "Master Burger", price: 150, category: "Burger", description: "Double beef patty, beef bacon." },
-          { id: 3, name: lang === 'ar' ? "أجنحة الدجاج الإلكترونية" : "Electronic Wings", price: 80, category: "Chicken", description: "6 pieces of wings with spicy buffalo sauce." },
-          { id: 4, name: lang === 'ar' ? "بطاطس الماتريكس" : "Matrix Fries", price: 45, category: "Sides", description: "French fries topped with cheese sauce." },
-          { id: 5, name: lang === 'ar' ? "كود بلو صودا" : "Code Blue Soda", price: 30, category: "Drinks", description: "Refreshing soft drink in neon blue." },
-        ]);
+        // Find in MOCK_RESTAURANTS for Vercel/demo fallback
+        const mockId = typeof id === 'string' && !id.startsWith('demo-') ? `demo-${id}` : id;
+        const mockRest = MOCK_RESTAURANTS.find(r => r._id === id || r._id === mockId || r.id === Number(id));
+        if (mockRest) {
+          setRestaurant({
+            ...mockRest,
+            name: mockRest.name[lang] || mockRest.name.en,
+            description: mockRest.description[lang] || mockRest.description.en,
+          });
+          
+          const localizedMenu = (mockRest.menuItems || []).map(item => ({
+            ...item,
+            id: item._id,
+            name: item.name[lang] || item.name.en,
+            description: item.description[lang] || item.description.en,
+          }));
+          setMenuItems(localizedMenu);
+          setError(null);
+        } else {
+          setError(lang === 'ar' ? "تعذر تحميل البيانات. تأكد من تشغيل الخادم وقاعدة البيانات." : "Failed to load data. Make sure server and DB are running.");
+        }
+        setLoading(false);
       }
     };
 

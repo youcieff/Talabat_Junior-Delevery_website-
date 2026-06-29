@@ -6,15 +6,17 @@ import { useTranslation } from "@/context/I18nContext";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Utensils, Clock, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { MOCK_RESTAURANTS, getRestaurantName, getRestaurantDesc } from "@/data/mockData";
 
 export default function Home() {
   const { t, lang } = useTranslation();
 
-  const MOCK_RESTAURANTS = [
-    { id: 1, name: lang === 'ar' ? "برجر جونيور" : "Junior Burger", image: "/images/restaurants/burger.png", rating: 4.8, deliveryTime: "20-30", category: lang === 'ar' ? 'برجر' : 'Burger', description: lang === 'ar' ? "نكهة المستقبل في كل قضمة مع أجود أنواع اللحوم." : "Future flavor in every bite with the finest meats." },
-    { id: 2, name: lang === 'ar' ? "سوشي المستقبل" : "Future Sushi", image: "/images/restaurants/sushi.png", rating: 4.9, deliveryTime: "30-45", category: lang === 'ar' ? 'سوشي' : 'Sushi', description: lang === 'ar' ? "تجربة يابانية فريدة بتقنيات عصرية." : "Unique Japanese experience with modern techniques." },
-    { id: 3, name: lang === 'ar' ? "بيزا النيون" : "Neon Pizza", image: "/images/restaurants/pizza.png", rating: 4.7, deliveryTime: "25-35", category: lang === 'ar' ? 'بيتزا' : 'Pizza', description: lang === 'ar' ? "عجينة إيطالية تقليدية بلمسة سايبر بانك." : "Traditional Italian dough with a cyberpunk touch." },
-  ];
+  // Use first 3 from shared mock data - properly localized
+  const featuredRestaurants = MOCK_RESTAURANTS.slice(0, 3).map(r => ({
+    ...r,
+    name: getRestaurantName(r, lang),
+    description: getRestaurantDesc(r, lang),
+  }));
 
   return (
     <div className="relative overflow-hidden bg-background">
@@ -27,13 +29,13 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                 <div className="w-12 h-1 bg-cyber-pink rounded-full shadow-neon-pink"></div>
-                 <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyber-cyan italic">{lang === 'ar' ? 'الأفضل في منطقتك' : 'Top Rated Nearby'}</span>
-              </div>
-              <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white italic uppercase leading-none">
-                {t("featured_restaurants")}
-              </h2>
+               <div className="flex items-center gap-3">
+                  <div className="w-12 h-1 bg-cyber-pink rounded-full shadow-neon-pink"></div>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyber-cyan italic">{lang === 'ar' ? 'الأفضل في منطقتك' : 'Top Rated Nearby'}</span>
+               </div>
+               <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white italic uppercase leading-none">
+                 {t("featured_restaurants")}
+               </h2>
             </div>
             
             <Link 
@@ -46,13 +48,13 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {MOCK_RESTAURANTS.map((restaurant, idx) => (
+            {featuredRestaurants.map((restaurant, idx) => (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                key={restaurant.id}
+                key={restaurant._id}
               >
                 <RestaurantCard restaurant={restaurant} />
               </motion.div>
@@ -63,7 +65,7 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
       </section>
 
-      {/* Why Choose Us - Simple Humanized Section */}
+      {/* Why Choose Us */}
       <section className="py-32 container mx-auto px-4">
          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             <div className="space-y-6">

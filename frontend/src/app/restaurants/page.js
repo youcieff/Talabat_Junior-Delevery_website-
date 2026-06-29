@@ -6,6 +6,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "@/context/I18nContext";
 import api from "@/utils/api";
+import { MOCK_RESTAURANTS, getRestaurantName } from "@/data/mockData";
 
 export default function RestaurantsPage() {
   const { t, lang } = useTranslation();
@@ -20,19 +21,16 @@ export default function RestaurantsPage() {
       try {
         setLoading(true);
         const res = await api.get("/restaurants");
-        setRestaurants(res.data.data || []);
+        const data = res.data.data || [];
+        if (data.length === 0) {
+          setRestaurants(MOCK_RESTAURANTS);
+        } else {
+          setRestaurants(data);
+        }
       } catch (err) {
         console.error("Failed to fetch restaurants:", err);
-        setError(lang === 'ar' ? "تعذر تحميل المطاعم. تأكد من تشغيل الخادم." : "Failed to load restaurants. Make sure the server is running.");
-        // Fallback mock data
-        setRestaurants([
-          { _id: "mock1", name: lang === 'ar' ? "برجر جونيور" : "Burger Junior", rating: 4.8, deliveryTime: "20-30", distance: "1.2", category: "burger" },
-          { _id: "mock2", name: lang === 'ar' ? "سوشي المستقبل" : "Future Sushi", rating: 4.9, deliveryTime: "40-50", distance: "3.5", category: "sushi" },
-          { _id: "mock3", name: lang === 'ar' ? "بيتزا النيون" : "Neon Pizza", rating: 4.6, deliveryTime: "30-40", distance: "2.1", category: "pizza" },
-          { _id: "mock4", name: lang === 'ar' ? "شاورما الماتريكس" : "Matrix Shawarma", rating: 4.7, deliveryTime: "15-25", distance: "0.8", category: "oriental" },
-          { _id: "mock5", name: lang === 'ar' ? "نودلز سايبر" : "Cyber Noodles", rating: 4.5, deliveryTime: "35-45", distance: "4.2", category: "asian" },
-          { _id: "mock6", name: lang === 'ar' ? "باستا الرقمية" : "Digital Pasta", rating: 4.4, deliveryTime: "25-35", distance: "1.9", category: "italian" },
-        ]);
+        // Fallback to shared mock data
+        setRestaurants(MOCK_RESTAURANTS);
       } finally {
         setLoading(false);
       }
@@ -49,10 +47,13 @@ export default function RestaurantsPage() {
   ];
 
   const filteredRestaurants = restaurants.filter(r => {
-    const name = r.name || "";
-    const category = r.category || "";
+    const nameObj = r.name || "";
+    const nameStr = typeof nameObj === 'object' ? (nameObj[lang] || nameObj.en) : nameObj;
+    const categoryObj = r.category || "";
+    const category = typeof categoryObj === 'object' ? (categoryObj[lang] || categoryObj.en) : categoryObj;
+    
     const matchesCategory = activeCategory === "all" || category.toLowerCase() === activeCategory.toLowerCase();
-    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = nameStr.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
