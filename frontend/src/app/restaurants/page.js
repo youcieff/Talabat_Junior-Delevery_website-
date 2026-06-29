@@ -2,23 +2,44 @@
 
 import RestaurantCard from "@/components/RestaurantCard";
 import { motion } from "framer-motion";
-import { Search, Filter, SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "@/context/I18nContext";
+import api from "@/utils/api";
 
 export default function RestaurantsPage() {
   const { t, lang } = useTranslation();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const MOCK_RESTAURANTS = [
-    { id: 1, name: lang === 'ar' ? "برجر جونيور" : "Burger Junior", rating: 4.8, deliveryTime: "20-30", distance: "1.2", category: "burger" },
-    { id: 2, name: lang === 'ar' ? "سوشي المستقبل" : "Future Sushi", rating: 4.9, deliveryTime: "40-50", distance: "3.5", category: "sushi" },
-    { id: 3, name: lang === 'ar' ? "بيتزا النيون" : "Neon Pizza", rating: 4.6, deliveryTime: "30-40", distance: "2.1", category: "pizza" },
-    { id: 4, name: lang === 'ar' ? "شاورما الماتريكس" : "Matrix Shawarma", rating: 4.7, deliveryTime: "15-25", distance: "0.8", category: "oriental" },
-    { id: 5, name: lang === 'ar' ? "نودلز سايبر" : "Cyber Noodles", rating: 4.5, deliveryTime: "35-45", distance: "4.2", category: "asian" },
-    { id: 6, name: lang === 'ar' ? "باستا الرقمية" : "Digital Pasta", rating: 4.4, deliveryTime: "25-35", distance: "1.9", category: "italian" },
-  ];
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/restaurants");
+        setRestaurants(res.data.data || []);
+      } catch (err) {
+        console.error("Failed to fetch restaurants:", err);
+        setError(lang === 'ar' ? "تعذر تحميل المطاعم. تأكد من تشغيل الخادم." : "Failed to load restaurants. Make sure the server is running.");
+        // Fallback mock data
+        setRestaurants([
+          { _id: "mock1", name: lang === 'ar' ? "برجر جونيور" : "Burger Junior", rating: 4.8, deliveryTime: "20-30", distance: "1.2", category: "burger" },
+          { _id: "mock2", name: lang === 'ar' ? "سوشي المستقبل" : "Future Sushi", rating: 4.9, deliveryTime: "40-50", distance: "3.5", category: "sushi" },
+          { _id: "mock3", name: lang === 'ar' ? "بيتزا النيون" : "Neon Pizza", rating: 4.6, deliveryTime: "30-40", distance: "2.1", category: "pizza" },
+          { _id: "mock4", name: lang === 'ar' ? "شاورما الماتريكس" : "Matrix Shawarma", rating: 4.7, deliveryTime: "15-25", distance: "0.8", category: "oriental" },
+          { _id: "mock5", name: lang === 'ar' ? "نودلز سايبر" : "Cyber Noodles", rating: 4.5, deliveryTime: "35-45", distance: "4.2", category: "asian" },
+          { _id: "mock6", name: lang === 'ar' ? "باستا الرقمية" : "Digital Pasta", rating: 4.4, deliveryTime: "25-35", distance: "1.9", category: "italian" },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, [lang]);
 
   const CATEGORIES = [
     { id: "all", label: t("category_all") },
@@ -27,9 +48,11 @@ export default function RestaurantsPage() {
     { id: "sushi", label: t("category_sushi") },
   ];
 
-  const filteredRestaurants = MOCK_RESTAURANTS.filter(r => {
-    const matchesCategory = activeCategory === "all" || r.category === activeCategory;
-    const matchesSearch = r.name.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredRestaurants = restaurants.filter(r => {
+    const name = r.name || "";
+    const category = r.category || "";
+    const matchesCategory = activeCategory === "all" || category.toLowerCase() === activeCategory.toLowerCase();
+    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -84,21 +107,35 @@ export default function RestaurantsPage() {
         ))}
       </div>
 
-      {/* Grid */}
-      <motion.div 
-        layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
-      >
-        {filteredRestaurants.length > 0 ? (
-          filteredRestaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-          ))
-        ) : (
-          <div className="col-span-full py-20 text-center glass rounded-[40px] border-white/5">
-             <p className="text-white/20 font-black uppercase tracking-[0.3em]">{t("no_results") || "No Matches Found"}</p>
-          </div>
-        )}
-      </motion.div>
+      {/* Error Banner */}
+      {error && (
+        <div className="glass mb-8 px-6 py-4 rounded-2xl border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-widest text-center">
+          {error}
+        </div>
+      )}
+
+      {/* Loading */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="w-12 h-12 border-4 border-cyber-cyan border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        /* Grid */
+        <motion.div 
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+        >
+          {filteredRestaurants.length > 0 ? (
+            filteredRestaurants.map((restaurant) => (
+              <RestaurantCard key={restaurant._id} restaurant={restaurant} />
+            ))
+          ) : (
+            <div className="col-span-full py-20 text-center glass rounded-[40px] border-white/5">
+               <p className="text-white/20 font-black uppercase tracking-[0.3em]">{t("no_results") || "No Matches Found"}</p>
+            </div>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }

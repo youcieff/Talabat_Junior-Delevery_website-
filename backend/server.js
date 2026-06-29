@@ -6,8 +6,6 @@ const connectDB = require('./config/db');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const helmet = require('helmet');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
 const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 
@@ -24,12 +22,6 @@ app.use(express.json());
 
 // Set security headers
 app.use(helmet());
-
-// Sanitize data
-app.use(mongoSanitize());
-
-// Prevent XSS attacks
-app.use(xss());
 
 // Rate limiting
 const limiter = rateLimit({
