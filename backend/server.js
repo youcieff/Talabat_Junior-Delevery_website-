@@ -50,6 +50,7 @@ app.use('/api/restaurants', require('./routes/restaurants'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/menu-items', require('./routes/menuItems'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/offers', require('./routes/offers'));
 app.use('/api/upload', require('./routes/upload'));
 
 // Error handler

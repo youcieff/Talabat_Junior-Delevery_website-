@@ -1,11 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Tag, Clock, Zap, Gift, Percent, ArrowRight } from "lucide-react";
+import { Tag, Clock, Zap, Gift, Percent, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/context/I18nContext";
+import { useState, useEffect } from "react";
+import api from "@/utils/api";
 
-const OFFERS = [
+const MOCK_OFFERS = [
   {
     id: 1,
     badge: "🔥 HOT",
@@ -58,6 +60,37 @@ const OFFERS = [
 
 export default function OffersPage() {
   const { lang } = useTranslation();
+  const [offersList, setOffersList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get("/offers");
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          setOffersList(res.data.data);
+        } else {
+          setOffersList(MOCK_OFFERS);
+        }
+      } catch (err) {
+        console.error("Offers fetch error, falling back to mock data:", err);
+        setOffersList(MOCK_OFFERS);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOffers();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <Loader2 size={48} className="text-cyber-cyan animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-20 pb-32">
@@ -83,16 +116,16 @@ export default function OffersPage() {
 
       {/* Offers Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {OFFERS.map((offer, i) => (
+        {offersList.map((offer, i) => (
           <motion.div
-            key={offer.id}
+            key={offer._id || offer.id}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className={`glass rounded-[40px] p-10 border ${offer.border} relative overflow-hidden group hover:scale-[1.02] transition-all duration-500`}
+            className={`glass rounded-[40px] p-10 border ${offer.border || 'border-cyber-pink/30'} ${offer.glow || 'shadow-neon-pink'} relative overflow-hidden group hover:scale-[1.02] transition-all duration-500`}
           >
             {/* Background Gradient */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${offer.color} opacity-50`}></div>
+            <div className={`absolute inset-0 bg-gradient-to-br ${offer.color || 'from-cyber-pink/20 to-transparent'} opacity-50`}></div>
 
             <div className="relative z-10">
               {/* Top Row */}

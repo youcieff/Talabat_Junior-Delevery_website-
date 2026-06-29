@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Utensils, ClipboardList, Settings, LogOut, Package } from "lucide-react";
+import { LayoutDashboard, Utensils, ClipboardList, Settings, LogOut, Package, Tag } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "@/context/I18nContext";
 
@@ -16,6 +16,7 @@ export default function AdminSidebar() {
     { name: t("nav_restaurants"), icon: Utensils, href: "/admin/restaurants" },
     { name: t("admin_menu_title"), icon: Package, href: "/admin/menu" },
     { name: t("nav_my_orders"), icon: ClipboardList, href: "/admin/orders" },
+    { name: lang === 'ar' ? "العروض والخصومات" : "Offers & Promos", icon: Tag, href: "/admin/offers" },
     { name: lang === 'ar' ? "الإعدادات" : "Settings", icon: Settings, href: "/admin/settings" },
   ];
 
