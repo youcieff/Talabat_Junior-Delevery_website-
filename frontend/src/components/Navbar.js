@@ -62,10 +62,7 @@ export default function Navbar() {
 
             <div className="w-[1px] h-6 bg-white/5 mx-1 hidden md:block"></div>
 
-            <button className="p-2 hover:text-cyber-cyan transition-colors">
-              <Search size={20} />
-            </button>
-            
+
             <Link href="/cart" className="p-2 hover:text-cyber-pink transition-colors relative">
               <ShoppingCart size={20} />
               {cartCount > 0 && (
