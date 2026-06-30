@@ -39,15 +39,15 @@ export default function Hero() {
             </p>
 
             <div className={`flex flex-wrap items-center gap-6 ${lang === 'ar' ? 'justify-end' : 'justify-start'}`}>
-              <button className="group px-10 py-5 rounded-2xl bg-cyber-gradient font-black text-lg hover:scale-105 transition-all flex items-center gap-3 shadow-neon-pink overflow-hidden relative">
+              <Link href="/restaurants" className="group px-10 py-5 rounded-2xl bg-cyber-gradient font-black text-lg hover:scale-105 transition-all flex items-center gap-3 shadow-neon-pink overflow-hidden relative">
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform"></div>
                 <span className="relative z-10">{t("btn_order_now")}</span>
                 {lang === 'ar' ? <ArrowLeft size={22} className="relative z-10" /> : <ChevronRight size={22} className="relative z-10" />}
-              </button>
+              </Link>
               
-              <button className="px-10 py-5 rounded-2xl glass font-black text-lg hover:bg-white/5 transition-all text-white/60 hover:text-white border-white/5">
+              <Link href="/restaurants" className="px-10 py-5 rounded-2xl glass font-black text-lg hover:bg-white/5 transition-all text-white/60 hover:text-white border-white/5 inline-block">
                 {t("nav_restaurants")}
-              </button>
+              </Link>
             </div>
 
             <div className={`mt-16 flex items-center gap-10 text-white/30 font-bold text-[10px] uppercase tracking-widest ${lang === 'ar' ? 'justify-end' : 'justify-start'}`}>
