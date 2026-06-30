@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Rocket, Zap, Shield, ChevronRight } from "lucide-react";
 import { useTranslation } from "@/context/I18nContext";
+import Link from "next/link";
 
 export default function Hero() {
   const { t, lang } = useTranslation();
